@@ -7,6 +7,7 @@ import Login from "../views/Login.vue";
 import Thanks from "../views/Thanks.vue";
 import Mypage from "../views/Mypage.vue";
 import Reservation from "../views/Reservation.vue";
+import store from "../store/index";
 
 Vue.use(VueRouter);
 
@@ -41,11 +42,17 @@ const routes = [
     path: "/Mypage",
     name: "Mypage",
     component: Mypage,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/Reservation",
     name: "Reservation",
     component: Reservation,
+    meta: {
+      requiresAuth: true,
+    },
   },
 ];
 
@@ -53,6 +60,22 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (
+    to.matched.some((record) => record.meta.requiresAuth) &&
+    !store.state.auth
+  ) {
+    next({
+      path: "/",
+      query: {
+        redirect: to.fullPath,
+      },
+    });
+  } else {
+    next();
+  }
 });
 
 export default router;

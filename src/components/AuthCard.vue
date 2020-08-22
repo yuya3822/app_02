@@ -4,19 +4,19 @@
     <div class="input-container">
       <div class="input" v-if="title == 'Registration'">
         <img src="../assets/username.png" alt="" width="25px" />
-        <input type="text" placeholder="Username" />
+        <input type="text" placeholder="Username" v-model="username" />
       </div>
       <div class="input">
         <img src="../assets/email.png" alt="" width="25px" />
-        <input type="email" placeholder="Email" />
+        <input type="email" placeholder="Email" v-model="email" />
       </div>
       <div class="input">
         <img src="../assets/password.png" alt="" width="25px" />
-        <input type="password" placeholder="Password" />
+        <input type="password" placeholder="Password" v-model="password" />
       </div>
     </div>
     <div class="button">
-      <button>{{ btnText }}</button>
+      <button @click="sendParent">{{ btnText }}</button>
     </div>
   </div>
 </template>
@@ -24,6 +24,25 @@
 <script>
 export default {
   props: ["title", "btnText"],
+  data() {
+    return {
+      username: "",
+      email: "",
+      password: "",
+    };
+  },
+  methods: {
+    sendParent() {
+      const data = {
+        email: this.email,
+        password: this.password,
+      };
+      if (this.username != "") {
+        data.name = this.username;
+      }
+      this.$emit("getChildData", data);
+    },
+  },
 };
 </script>
 

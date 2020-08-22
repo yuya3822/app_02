@@ -1,13 +1,22 @@
 <template>
   <div class="card">
     <p class="text">{{ text }}</p>
-    <button>{{ btnText }}</button>
+    <button @click="transition">{{ btnText }}</button>
   </div>
 </template>
-  
+
 <script>
 export default {
   props: ["text", "btnText"],
+  methods: {
+    transition() {
+      if (this.$route.name == "Thanks") {
+        this.$router.push("/Login");
+      } else {
+        this.$router.push("/");
+      }
+    },
+  },
 };
 </script>
 
@@ -20,6 +29,7 @@ export default {
   margin-top: 100px;
   box-shadow: 2px 2px 4px gray;
   padding: 100px 0;
+  margin: 0 auto;
 }
 .text {
   font-size: 24px;

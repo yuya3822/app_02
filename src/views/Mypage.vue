@@ -4,28 +4,39 @@
     <div class="flex between">
       <div class="left">
         <h3>予約状況</h3>
-        <div class="card">
+        <div
+          class="card"
+          v-for="(reservation, index) in reservationData"
+          :key="index"
+        >
           <div class="flex align-items-center between">
             <img src="../assets/time.png" alt="" width="25px" height="25px" />
-            <p class="title">予約1</p>
-            <img src="../assets/cross.png" alt="" width="25px" height="25px" />
+            <p class="title">予約{{ index + 1 }}</p>
+            <img
+              src="../assets/cross.png"
+              alt=""
+              width="25px"
+              height="25px"
+              @click="cancel(reservation.id)"
+              class="cancel"
+            />
           </div>
           <table>
             <tr>
               <td>Shop</td>
-              <td>仙人</td>
+              <td>{{ reservation.name }}</td>
             </tr>
             <tr>
               <td>Date</td>
-              <td>2020/05/15</td>
+              <td>{{ reservation.date }}</td>
             </tr>
             <tr>
               <td>Time</td>
-              <td>22:00</td>
+              <td>{{ reservation.time }}</td>
             </tr>
             <tr>
               <td>Number</td>
-              <td>2人</td>
+              <td>{{ reservation.user_num }}人</td>
             </tr>
           </table>
         </div>
@@ -33,7 +44,7 @@
       <div class="right">
         <h3>お気に入り店舗</h3>
         <div class="flex">
-          <CommonCard />
+          <CommonCard :is="CommonCard" :shops="likeData" />
         </div>
       </div>
     </div>
@@ -41,10 +52,56 @@
 </template>
 
 <script>
+import axios from "axios";
 import CommonCard from "@/components/CommonCard.vue";
 export default {
-  components: {
-    CommonCard,
+  data() {
+    return {
+      reservationData: [],
+      likeData: [],
+      CommonCard: null,
+    };
+  },
+  methods: {
+    async cancel(id) {
+      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
+      await axios.delete(baseUrl + "reservations?id=" + id);
+      this.$router.go({
+        path: this.$router.currentRoute.path,
+        force: true,
+      });
+    },
+    async getReservationData() {
+      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
+      const reservationData = await axios.get(
+        baseUrl + "reservations?user_id=" + this.$store.state.user.id
+      );
+      let reservation = reservationData.data.data;
+      for (let i = 0; i < reservation.length; i++) {
+        const shopData = await axios.get(
+          baseUrl + "shops/" + reservation[i].shop_id
+        );
+        reservation[i].name = shopData.data.item.name;
+      }
+      this.reservationData = reservation;
+    },
+    async getLikeData() {
+      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
+      const likeData = await axios.get(
+        baseUrl + "like?user_id=" + this.$store.state.user.id
+      );
+      let like = likeData.data.data;
+      for (let i = 0; i < like.length; i++) {
+        const shopData = await axios.get(baseUrl + "shops/" + like[i].shop_id);
+        shopData.data.item.like = true;
+        this.likeData.push(shopData.data.item);
+      }
+    },
+  },
+  async created() {
+    await this.getReservationData();
+    await this.getLikeData();
+    this.CommonCard = CommonCard;
   },
 };
 </script>
@@ -91,6 +148,9 @@ tr {
 td {
   width: 100px;
   vertical-align: middle;
+}
+.cancel {
+  cursor: pointer;
 }
 .right {
   width: 55%;

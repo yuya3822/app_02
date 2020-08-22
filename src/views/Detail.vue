@@ -2,77 +2,104 @@
   <div class="detail flex">
     <div class="left">
       <div class="flex align-items-center">
-        <button>＜</button>
-        <h2>仙人</h2>
+        <button @click="$router.push('/')">＜</button>
+        <h2>{{ shopsData.name }}</h2>
       </div>
-      <img
-        src="http://webcreatorbox.com/sample/images/bear.jpg"
-        alt
-        width="100%"
-      />
-      <p>#東京都</p>
-      <p>
-        料理長厳選の食材から作る寿司を用いたコースをぜひお楽しみください。食材・味・価格、お客様の満足度を徹底的に追及したお店です。特別な日のお食事、ビジネス接待まで気軽に使用することができます。
-      </p>
+      <img :src="shopsData.image_url" alt width="100%" />
+      <p>#{{ shopsData.area }}&nbsp;#{{ shopsData.genre }}</p>
+      <p>{{ shopsData.description }}</p>
     </div>
     <div class="right">
       <div class="card">
         <div class="card-content">
           <h2>予約</h2>
-          <Calendar />
+          <DatePicker is-inline v-model="selectDate" />
           <div class="pull-down">
-            <select name="area">
+            <select v-model="time">
               <option value hidden>Select time ...</option>
-              <option value>17時</option>
-              <option value>18時</option>
-              <option value>19時</option>
-              <option value>20時</option>
-              <option value>21時</option>
-              <option value>22時</option>
+              <option value="17:00">17:00</option>
+              <option value="18:00">18:00</option>
+              <option value="19:00">19:00</option>
+              <option value="20:00">20:00</option>
+              <option value="21:00">21:00</option>
+              <option value="22:00">22:00</option>
             </select>
           </div>
           <div class="pull-down">
-            <select name="area">
-              <option value hidden>Select number ...</option>
-              <option value>1人</option>
-              <option value>2人</option>
-              <option value>3人</option>
-              <option value>4人</option>
+            <select v-model="number">
+              <option value="1">1人</option>
+              <option value="2">2人</option>
+              <option value="3">3人</option>
+              <option value="4">4人</option>
             </select>
           </div>
           <div class="reservation-data">
             <table>
               <tr>
                 <td>Shop</td>
-                <td>仙人</td>
+                <td>{{ shopsData.name }}</td>
               </tr>
               <tr>
                 <td>Date</td>
-                <td>2020/05/15</td>
+                <td>{{ fixedDate }}</td>
               </tr>
               <tr>
                 <td>Time</td>
-                <td>22:00</td>
+                <td>{{ time }}</td>
               </tr>
               <tr>
                 <td>Number</td>
-                <td>2人</td>
+                <td>{{ number }}人</td>
               </tr>
             </table>
           </div>
         </div>
-        <div class="reservation-btn">予約する</div>
+        <div class="reservation-btn" @click="select()">予約する</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Calendar from "v-calendar/lib/components/calendar.umd";
-
+import DatePicker from "v-calendar/lib/components/date-picker.umd";
+import axios from "axios";
+import moment from "moment";
 export default {
+  data() {
+    return {
+      shopsData: "",
+      selectDate: new Date(),
+      time: "17:00",
+      number: 1,
+    };
+  },
+  props: ["shop_id"],
   components: {
-    Calendar,
+    DatePicker,
+  },
+  async created() {
+    const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
+    const shops = await axios.get(baseUrl + "shops/" + this.shop_id);
+    this.shopsData = shops.data.item;
+  },
+  methods: {
+    async select() {
+      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
+      const sendData = {
+        date: this.fixedDate,
+        time: this.time,
+        user_id: this.$store.state.user.id,
+        shop_id: this.shop_id,
+        user_num: this.number,
+      };
+      await axios.post(baseUrl + "reservations", sendData);
+      this.$router.push("/Reservation");
+    },
+  },
+  computed: {
+    fixedDate() {
+      return moment(this.selectDate).format("YYYY/MM/DD");
+    },
   },
 };
 </script>

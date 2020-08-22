@@ -2,37 +2,77 @@
   <div class="home">
     <div class="search flex">
       <div class="pull-down">
-        <select name="area">
-          <option value>All area</option>
-          <option value>東京都</option>
-          <option value>大阪府</option>
-          <option value>福岡県</option>
+        <select name="area" v-model="selectedArea">
+          <option value="">All area</option>
+          <option value="東京都">東京都</option>
+          <option value="大阪府">大阪府</option>
+          <option value="福岡県">福岡県</option>
         </select>
       </div>
       <div class="pull-down">
-        <select name="area">
-          <option value>All genre</option>
-          <option value>寿司</option>
-          <option value>焼肉</option>
-          <option value>居酒屋</option>
-          <option value>イタリアン</option>
-          <option value>ラーメン</option>
+        <select name="genre" v-model="selectedGenre">
+          <option value="">All genre</option>
+          <option value="寿司">寿司</option>
+          <option value="焼肉">焼肉</option>
+          <option value="居酒屋">居酒屋</option>
+          <option value="イタリアン">イタリアン</option>
+          <option value="ラーメン">ラーメン</option>
         </select>
       </div>
-      <input type="text" placeholder="Search ..." />
+      <input type="text" placeholder="Search ..." v-model="keyword" />
     </div>
-    <CommonCard />
+    <CommonCard :is="CommonCard" :shops="filteredShops" />
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import CommonCard from "@/components/CommonCard";
 export default {
   data() {
-    return {};
+    return {
+      shopsData: [],
+      keyword: "",
+      selectedArea: "",
+      selectedGenre: "",
+      likeData: "",
+      CommonCard: null,
+    };
   },
-  components: {
-    CommonCard,
+  computed: {
+    filteredShops() {
+      let shops = [];
+      for (let i in this.shopsData) {
+        let shop = this.shopsData[i];
+        if (shop.name.indexOf(this.keyword) !== -1) {
+          if (shop.area == this.selectedArea || !this.selectedArea) {
+            if (shop.genre == this.selectedGenre || !this.selectedGenre) {
+              shops.push(shop);
+            }
+          }
+        }
+      }
+      return shops;
+    },
+  },
+  async created() {
+    const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
+    const shops = await axios.get(baseUrl + "shops");
+    this.shopsData = shops.data.data;
+    this.likeData = await axios.get(
+      baseUrl + "like?user_id=" + this.$store.state.user.id
+    );
+    for (let i = 0; i < this.shopsData.length; i++) {
+      for (let j = 0; j < this.likeData.data.data.length; j++) {
+        if (!this.shopsData[i].like) {
+          this.shopsData[i].like =
+            this.shopsData[i].id === this.likeData.data.data[j].shop_id
+              ? true
+              : false;
+        }
+      }
+    }
+    this.CommonCard = CommonCard;
   },
 };
 </script>
@@ -70,6 +110,7 @@ select {
   background-position: right 10px center;
   line-height: 1.1em;
   outline: none;
+  cursor: pointer;
 }
 input {
   border: none;
