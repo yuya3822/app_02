@@ -11,7 +11,7 @@ export default {
   methods: {
     transition() {
       if (this.$route.name == "Thanks") {
-        this.$router.push("/Login");
+        this.$router.push("/login");
       } else {
         this.$router.push("/");
       }

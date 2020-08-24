@@ -18,6 +18,9 @@ export default new Vuex.Store({
     getUserAuth(state, payload) {
       state.auth = payload.data.auth;
     },
+    logout(state, payload) {
+      state.auth = payload.data.auth;
+    },
   },
   actions: {
     async getUserDataAction(context, email) {
@@ -29,6 +32,11 @@ export default new Vuex.Store({
       const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
       const data = await axios.post(baseUrl + "login", childData);
       context.commit("getUserAuth", data);
+    },
+    async logoutAction(context) {
+      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
+      const data = await axios.post(baseUrl + "logout");
+      context.commit("logout", data);
     },
   },
 });

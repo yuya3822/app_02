@@ -9,7 +9,7 @@
           <button
             @click="
               $router.push({
-                path: '/Detail/' + shop.id,
+                path: '/detail/' + shop.id,
                 params: { shop_id: shop.id },
               })
             "

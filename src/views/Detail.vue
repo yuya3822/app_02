@@ -93,7 +93,7 @@ export default {
         user_num: this.number,
       };
       await axios.post(baseUrl + "reservations", sendData);
-      this.$router.push("/Reservation");
+      this.$router.push("/reservation");
     },
   },
   computed: {

@@ -1,11 +1,7 @@
 <template>
   <header>
     <div class="header flex align-items-center">
-      <div
-        id="hamburger"
-        @click="openDrawerMenu"
-        :class="{ active: drawerFlg }"
-      >
+      <div id="hamburger" @click="openDrawerMenu" :class="{ active: drawerFlg }">
         <span></span>
         <span></span>
         <span></span>
@@ -15,33 +11,27 @@
     <transition name="right">
       <div v-if="drawerFlg" class="drawer-menu-wrapper">
         <div class="drawer-menu">
-          <router-link :to="{ name: 'Home' }" @click.native="openDrawerMenu()"
-            >Home</router-link
-          >
+          <router-link :to="{ name: 'Home' }" @click.native="openDrawerMenu()">Home</router-link>
           <router-link
             :to="{ name: 'Mypage' }"
             @click.native="openDrawerMenu()"
             v-if="$store.state.auth"
-            >Mypage</router-link
-          >
+          >Mypage</router-link>
           <router-link
             :to="{ name: 'Registration' }"
             @click.native="openDrawerMenu()"
             v-if="!$store.state.auth"
-            >Registration</router-link
-          >
+          >Registration</router-link>
           <router-link
             :to="{ name: 'Login' }"
             @click.native="openDrawerMenu()"
             v-if="!$store.state.auth"
-            >Login</router-link
-          >
+          >Login</router-link>
           <router-link
             :to="{ name: 'Login' }"
             @click.native="logout()"
             v-if="$store.state.auth"
-            >Logout</router-link
-          >
+          >Logout</router-link>
         </div>
       </div>
     </transition>
@@ -49,7 +39,6 @@
 </template>
 
 <script>
-import axios from "axios";
 export default {
   data() {
     return {
@@ -62,8 +51,7 @@ export default {
     },
     async logout() {
       this.openDrawerMenu();
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-      await axios.post(baseUrl + "logout");
+      await this.$store.dispatch("logoutAction");
     },
   },
 };

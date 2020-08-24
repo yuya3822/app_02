@@ -19,7 +19,7 @@ export default {
     async showChildData(childData) {
       const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
       await axios.post(baseUrl + "register", childData);
-      this.$router.push("/login");
+      this.$router.push("/thanks");
     },
   },
 };

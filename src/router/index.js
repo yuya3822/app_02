@@ -18,28 +18,28 @@ const routes = [
     component: Home,
   },
   {
-    path: "/Detail/:shop_id",
+    path: "/detail/:shop_id",
     name: "Detail",
     component: Detail,
     props: true,
   },
   {
-    path: "/Registration",
+    path: "/registration",
     name: "Registration",
     component: Registration,
   },
   {
-    path: "/Login",
+    path: "/login",
     name: "Login",
     component: Login,
   },
   {
-    path: "/Thanks",
+    path: "/thanks",
     name: "Thanks",
     component: Thanks,
   },
   {
-    path: "/Mypage",
+    path: "/mypage",
     name: "Mypage",
     component: Mypage,
     meta: {
@@ -47,7 +47,7 @@ const routes = [
     },
   },
   {
-    path: "/Reservation",
+    path: "/reservation",
     name: "Reservation",
     component: Reservation,
     meta: {
