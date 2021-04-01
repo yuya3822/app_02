@@ -13,7 +13,7 @@
       <div class="card">
         <div class="card-content">
           <h2>予約</h2>
-          <DatePicker is-inline v-model="selectDate" />
+          <input type="date" v-model="date" />
           <div class="pull-down">
             <select v-model="time">
               <option value hidden>Select time ...</option>
@@ -41,7 +41,7 @@
               </tr>
               <tr>
                 <td>Date</td>
-                <td>{{ fixedDate }}</td>
+                <td>{{ date }}</td>
               </tr>
               <tr>
                 <td>Time</td>
@@ -61,22 +61,18 @@
 </template>
 
 <script>
-import DatePicker from "v-calendar/lib/components/date-picker.umd";
 import axios from "axios";
 import moment from "moment";
 export default {
   data() {
     return {
       shopsData: "",
-      selectDate: new Date(),
       time: "17:00",
       number: 1,
+      date: moment().format("YYYY-MM-DD"),
     };
   },
   props: ["shop_id"],
-  components: {
-    DatePicker,
-  },
   async created() {
     const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
     const shops = await axios.get(baseUrl + "shops/" + this.shop_id);
@@ -86,7 +82,7 @@ export default {
     async select() {
       const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
       const sendData = {
-        date: this.fixedDate,
+        date: this.date,
         time: this.time,
         user_id: this.$store.state.user.id,
         shop_id: this.shop_id,
@@ -196,5 +192,11 @@ td {
   background: #0038ff;
   border-radius: 0 0 5px 5px;
   cursor: pointer;
+}
+.card-content input {
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  padding: 5px 10px 5px 10px;
 }
 </style>
