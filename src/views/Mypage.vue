@@ -67,14 +67,14 @@ export default {
   },
   methods: {
     async cancel(reservation_id, shop_id) {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       await axios.delete(
         baseUrl + "shops/" + shop_id + "/reservations/" + reservation_id
       );
       await this.getUser();
     },
     async getUser() {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       const user = await axios.get(
         baseUrl + "users/" + this.$store.state.user_id
       );

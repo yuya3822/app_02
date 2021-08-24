@@ -125,7 +125,7 @@ export default {
   },
   methods: {
     async select() {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       const sendData = {
         date: this.selectedDate,
         time: this.selectedTime,
@@ -139,7 +139,7 @@ export default {
       this.$router.push("/reservation");
     },
     async getShops() {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       const shops = await axios.get(baseUrl + "shops/" + this.shop_id);
       this.shopsData = shops.data.data;
     },

@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     async like(shop) {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       if (shop.likes.length === 0) {
         await axios.post(
           baseUrl +

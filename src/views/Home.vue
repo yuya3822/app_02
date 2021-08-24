@@ -64,19 +64,19 @@ export default {
   },
   methods: {
     async getShops() {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       const shops = await axios.get(
         baseUrl + "shops?user_id=" + this.$store.state.user_id
       );
       this.shopsData = shops.data.data;
     },
     async getAreas() {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       const areas = await axios.get(baseUrl + "areas");
       this.areasData = areas.data.data;
     },
     async getGenres() {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       const genres = await axios.get(baseUrl + "genres");
       this.genresData = genres.data.data;
     },
