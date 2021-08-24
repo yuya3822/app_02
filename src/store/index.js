@@ -24,13 +24,13 @@ export default new Vuex.Store({
   },
   actions: {
     async userAuthAction(context, childData) {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       const data = await axios.post(baseUrl + "users/login", childData);
       context.commit("userData", data);
       context.commit("userAuth", data);
     },
     async logoutAction(context) {
-      const baseUrl = "http://localhost:8000/api/v1/";
+      const baseUrl = "https://desolate-journey-37709.herokuapp.com/api/v1/";
       const data = await axios.post(baseUrl + "users/logout");
       context.commit("logout", data);
     },
