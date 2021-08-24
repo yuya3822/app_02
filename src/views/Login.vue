@@ -1,30 +1,20 @@
 <template>
-  <div class="login">
-    <AuthCard title="Login" btnText="ログイン" @getChildData="showChildData" />
+  <div class="main">
+    <AuthCard title="Login" btnText="ログイン" @getChildData="login" />
   </div>
 </template>
 
 <script>
-import axios from "axios";
 import AuthCard from "@/components/AuthCard.vue";
 export default {
   components: {
     AuthCard,
   },
   methods: {
-    async showChildData(childData) {
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-      await axios.post(baseUrl + "login", childData);
-      await this.$store.dispatch("getUserAuthAction", childData);
-      await this.$store.dispatch("getUserDataAction", childData.email);
+    async login(childData) {
+      await this.$store.dispatch("userAuthAction", childData);
       this.$router.push("/");
     },
   },
 };
 </script>
-
-<style scoped>
-.login {
-  padding: 120px 100px 0;
-}
-</style>

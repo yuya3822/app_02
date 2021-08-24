@@ -1,50 +1,55 @@
 <template>
-  <div class="mypage">
-    <h2>testさん</h2>
-    <div class="flex between">
-      <div class="left">
-        <h3>予約状況</h3>
+  <div class="main">
+    <h2 class="username">{{ user.name }}さん</h2>
+    <div class="flex between mypage">
+      <div class="status">
+        <h3 class="status__ttl">予約状況</h3>
         <div
-          class="card"
-          v-for="(reservation, index) in reservationData"
-          :key="index"
+          class="status__card"
+          v-for="(shop, index) in user.reservations"
+          :key="shop.id"
         >
-          <div class="flex align-items-center between">
-            <img src="../assets/time.png" alt="" width="25px" height="25px" />
-            <p class="title">予約{{ index + 1 }}</p>
+          <div class="flex align-items-center between status__card__top">
             <img
-              src="../assets/cross.png"
-              alt=""
+              src="../assets/time.png"
+              alt="time-icon"
               width="25px"
               height="25px"
-              @click="cancel(reservation.id)"
+            />
+            <p>予約{{ index + 1 }}</p>
+            <img
+              src="../assets/cross.png"
+              alt="cross-icon"
+              width="25px"
+              height="25px"
+              @click="cancel(shop.pivot.id, shop.id)"
               class="cancel"
             />
           </div>
-          <table>
+          <table class="status__card__bottom">
             <tr>
               <td>Shop</td>
-              <td>{{ reservation.name }}</td>
+              <td>{{ shop.name }}</td>
             </tr>
             <tr>
               <td>Date</td>
-              <td>{{ reservation.date }}</td>
+              <td>{{ shop.pivot.date }}</td>
             </tr>
             <tr>
               <td>Time</td>
-              <td>{{ reservation.time }}</td>
+              <td>{{ shop.pivot.time }}</td>
             </tr>
             <tr>
               <td>Number</td>
-              <td>{{ reservation.user_num }}人</td>
+              <td>{{ shop.pivot.user_num }}人</td>
             </tr>
           </table>
         </div>
       </div>
-      <div class="right">
-        <h3>お気に入り店舗</h3>
-        <div class="flex">
-          <CommonCard :is="CommonCard" :shops="likeData" />
+      <div class="likes">
+        <h3 class="likes__ttl">お気に入り店舗</h3>
+        <div class="flex card-wrapper between wrap">
+          <CommonCard :shops="user.likes" @getChildData="getUser" />
         </div>
       </div>
     </div>
@@ -57,80 +62,57 @@ import CommonCard from "@/components/CommonCard.vue";
 export default {
   data() {
     return {
-      reservationData: [],
-      likeData: [],
-      CommonCard: null,
+      user: "",
     };
   },
   methods: {
-    async cancel(id) {
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-      await axios.delete(baseUrl + "reservations?id=" + id);
-      this.$router.go({
-        path: this.$router.currentRoute.path,
-        force: true,
-      });
-    },
-    async getReservationData() {
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-      const reservationData = await axios.get(
-        baseUrl + "reservations?user_id=" + this.$store.state.user.id
+    async cancel(reservation_id, shop_id) {
+      const baseUrl = "http://localhost:8000/api/v1/";
+      await axios.delete(
+        baseUrl + "shops/" + shop_id + "/reservations/" + reservation_id
       );
-      let reservation = reservationData.data.data;
-      for (let i = 0; i < reservation.length; i++) {
-        const shopData = await axios.get(
-          baseUrl + "shops/" + reservation[i].shop_id
-        );
-        reservation[i].name = shopData.data.item.name;
-      }
-      this.reservationData = reservation;
+      await this.getUser();
     },
-    async getLikeData() {
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-      const likeData = await axios.get(
-        baseUrl + "like?user_id=" + this.$store.state.user.id
+    async getUser() {
+      const baseUrl = "http://localhost:8000/api/v1/";
+      const user = await axios.get(
+        baseUrl + "users/" + this.$store.state.user_id
       );
-      let like = likeData.data.data;
-      for (let i = 0; i < like.length; i++) {
-        const shopData = await axios.get(baseUrl + "shops/" + like[i].shop_id);
-        shopData.data.item.like = true;
-        this.likeData.push(shopData.data.item);
-      }
+      this.user = user.data.data;
     },
   },
   async created() {
-    await this.getReservationData();
-    await this.getLikeData();
-    this.CommonCard = CommonCard;
+    await this.getUser();
+  },
+  components: {
+    CommonCard,
   },
 };
 </script>
 
 <style scoped>
-.mypage {
-  padding: 120px 100px 0;
-}
-.mypage > div {
-  width: 85vw;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-h2 {
+.username {
   text-align: center;
   font-size: 32px;
   margin-bottom: 48px;
 }
-h3 {
+
+.mypage {
+  width: 85vw;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.status {
+  width: 40%;
+}
+
+.status__ttl {
   font-size: 24px;
   margin-bottom: 30px;
 }
-.left {
-  width: 40%;
-}
-.title {
-  margin-right: 60%;
-}
-.card {
+
+.status__card {
   background: #305dff;
   width: 80%;
   margin: 30px 0;
@@ -139,20 +121,30 @@ h3 {
   border-radius: 5px;
   box-shadow: 2px 2px 4px gray;
 }
-.card div {
+
+.status__card__top {
   margin-bottom: 25px;
 }
-tr {
+
+.status__card__bottom tr {
   height: 40px;
 }
-td {
+
+.status__card__bottom td {
   width: 100px;
   vertical-align: middle;
 }
+
 .cancel {
   cursor: pointer;
 }
-.right {
+
+.likes {
   width: 55%;
+}
+
+.likes__ttl {
+  font-size: 24px;
+  margin-bottom: 30px;
 }
 </style>

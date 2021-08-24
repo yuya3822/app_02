@@ -1,40 +1,56 @@
 <template>
   <header>
-    <div class="header flex align-items-center">
-      <div id="hamburger" @click="openDrawerMenu" :class="{ active: drawerFlg }">
+    <div class="header align-items-center flex">
+      <div
+        id="hamburger"
+        @click="openDrawerMenu"
+        :class="{ active: drawerFlg }"
+        class="header__hamburger"
+      >
         <span></span>
         <span></span>
         <span></span>
       </div>
-      <h1>Rese</h1>
+      <h1 class="header__ttl">Rese</h1>
     </div>
-    <transition name="right">
-      <div v-if="drawerFlg" class="drawer-menu-wrapper">
-        <div class="drawer-menu">
-          <router-link :to="{ name: 'Home' }" @click.native="openDrawerMenu()">Home</router-link>
-          <router-link
-            :to="{ name: 'Mypage' }"
-            @click.native="openDrawerMenu()"
-            v-if="$store.state.auth"
-          >Mypage</router-link>
-          <router-link
-            :to="{ name: 'Registration' }"
-            @click.native="openDrawerMenu()"
-            v-if="!$store.state.auth"
-          >Registration</router-link>
-          <router-link
-            :to="{ name: 'Login' }"
-            @click.native="openDrawerMenu()"
-            v-if="!$store.state.auth"
-          >Login</router-link>
-          <router-link
-            :to="{ name: 'Login' }"
-            @click.native="logout()"
-            v-if="$store.state.auth"
-          >Logout</router-link>
-        </div>
+    <div v-if="drawerFlg" class="menu" :class="{ active: drawerFlg }">
+      <div class="menu__item">
+        <router-link
+          :to="{ name: 'Home' }"
+          @click.native="openDrawerMenu()"
+          class="menu__item"
+          >Home</router-link
+        >
+        <router-link
+          :to="{ name: 'Mypage' }"
+          @click.native="openDrawerMenu()"
+          v-if="$store.state.auth"
+          class="menu__item"
+          >Mypage</router-link
+        >
+        <router-link
+          :to="{ name: 'Registration' }"
+          @click.native="openDrawerMenu()"
+          v-if="!$store.state.auth"
+          class="menu__item"
+          >Registration</router-link
+        >
+        <router-link
+          :to="{ name: 'Login' }"
+          @click.native="openDrawerMenu()"
+          v-if="!$store.state.auth"
+          class="menu__item"
+          >Login</router-link
+        >
+        <router-link
+          :to="{ name: 'Login' }"
+          @click.native="logout()"
+          v-if="$store.state.auth"
+          class="menu__item"
+          >Logout</router-link
+        >
       </div>
-    </transition>
+    </div>
   </header>
 </template>
 
@@ -64,13 +80,7 @@ export default {
   left: 100px;
 }
 
-.header h1 {
-  margin-left: 20px;
-  font-size: 32px;
-  color: #305dff;
-}
-
-#hamburger {
+.header__hamburger {
   width: 40px;
   height: 40px;
   cursor: pointer;
@@ -81,7 +91,7 @@ export default {
   z-index: 20;
 }
 
-#hamburger span {
+.header__hamburger span {
   position: absolute;
   left: 10px;
   display: block;
@@ -90,30 +100,53 @@ export default {
   transition: 0.8s;
 }
 
-#hamburger span:nth-of-type(1) {
+.header__hamburger span:nth-of-type(1) {
   width: 10px;
   top: 13px;
 }
 
-#hamburger span:nth-of-type(2) {
+.header__hamburger span:nth-of-type(2) {
   width: 20px;
   top: 20px;
 }
 
-#hamburger span:nth-of-type(3) {
+.header__hamburger span:nth-of-type(3) {
   width: 5px;
   top: 27px;
 }
 
-.left-enter-active,
-.left-leave-active {
-  transform: translate(0px, 0px);
+.header__hamburger.active {
+  position: fixed;
 }
-.left-enter,
-.left-leave-to {
-  transform: translateX(-100vw) translateX(0px);
+
+.header__hamburger.active span:nth-of-type(1) {
+  width: 20px;
+  top: 20px;
+  transform: rotate(45deg);
 }
-.drawer-menu-wrapper {
+
+.header__hamburger.active span:nth-of-type(2) {
+  opacity: 0;
+}
+
+.header__hamburger.active span:nth-of-type(3) {
+  width: 20px;
+  top: 20px;
+  transform: rotate(-45deg);
+}
+
+.header__ttl {
+  font-size: 32px;
+  color: #305dff;
+  margin-left: 20px;
+}
+
+.menu {
+  display: none;
+}
+
+.menu.active {
+  display: block;
   position: fixed;
   z-index: 10;
   top: 0;
@@ -126,26 +159,12 @@ export default {
   text-align: center;
   padding-top: 30vh;
 }
-.drawer-menu a {
+
+.menu__item {
   color: #305dff;
   text-decoration: none;
   font-size: 32px;
   display: block;
   margin-bottom: 30px;
-}
-#hamburger.active span:nth-of-type(1) {
-  width: 20px;
-  top: 20px;
-  transform: rotate(45deg);
-}
-
-#hamburger.active span:nth-of-type(2) {
-  opacity: 0;
-}
-
-#hamburger.active span:nth-of-type(3) {
-  width: 20px;
-  top: 20px;
-  transform: rotate(-45deg);
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="register">
+  <div class="main">
     <AuthCard
       title="Registration"
       btnText="登録"
@@ -17,16 +17,10 @@ export default {
   },
   methods: {
     async showChildData(childData) {
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-      await axios.post(baseUrl + "register", childData);
+      const baseUrl = "http://localhost:8000/api/v1/";
+      await axios.post(baseUrl + "users/registration", childData);
       this.$router.push("/thanks");
     },
   },
 };
 </script>
-
-<style scoped>
-.register {
-  padding: 120px 100px 0;
-}
-</style>

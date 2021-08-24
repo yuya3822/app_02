@@ -1,24 +1,54 @@
 <template>
-  <div class="card">
-    <div class="title">{{ title }}</div>
+  <form class="auth-card" @submit.prevent="sendParent">
+    <div class="auth-card__ttl">{{ title }}</div>
     <div class="input-container">
-      <div class="input" v-if="title == 'Registration'">
-        <img src="../assets/username.png" alt="" width="25px" />
-        <input type="text" placeholder="Username" v-model="username" />
+      <div class="auth-card__item" v-if="title == 'Registration'">
+        <img
+          class="auth-card__item__img"
+          src="../assets/username.png"
+          alt="username-icon"
+          width="25px"
+        />
+        <input
+          class="auth-card__item__input"
+          type="text"
+          placeholder="Username"
+          v-model="username"
+        />
       </div>
-      <div class="input">
-        <img src="../assets/email.png" alt="" width="25px" />
-        <input type="email" placeholder="Email" v-model="email" />
+      <div class="auth-card__item">
+        <img
+          class="auth-card__item__img"
+          src="../assets/email.png"
+          alt="email-icon"
+          width="25px"
+        />
+        <input
+          class="auth-card__item__input"
+          type="email"
+          placeholder="Email"
+          v-model="email"
+        />
       </div>
-      <div class="input">
-        <img src="../assets/password.png" alt="" width="25px" />
-        <input type="password" placeholder="Password" v-model="password" />
+      <div class="auth-card__item">
+        <img
+          class="auth-card__item__img"
+          src="../assets/password.png"
+          alt="password-icon"
+          width="25px"
+        />
+        <input
+          class="auth-card__item__input"
+          type="password"
+          placeholder="Password"
+          v-model="password"
+        />
       </div>
     </div>
-    <div class="button">
-      <button @click="sendParent">{{ btnText }}</button>
+    <div class="auth-card__btn">
+      <input type="submit" :value="btnText" />
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
@@ -47,7 +77,7 @@ export default {
 </script>
 
 <style scoped>
-.card {
+.auth-card {
   background: #ffffff;
   width: 400px;
   margin: 0 auto;
@@ -56,7 +86,8 @@ export default {
   margin-top: 100px;
   box-shadow: 2px 2px 4px gray;
 }
-.card .title {
+
+.auth-card__ttl {
   background: #305dff;
   border-radius: 5px 5px 0 0;
   color: #ffffff;
@@ -65,29 +96,31 @@ export default {
   padding-left: 20px;
   font-size: 18px;
 }
-.input-container {
+
+.auth-card__item {
   text-align: center;
-  margin: 25px;
-}
-.input {
   margin-top: 20px;
 }
-.input img {
+
+.auth-card__item__img {
   vertical-align: middle;
   margin-right: 10px;
 }
-.input input {
+
+.auth-card__item__input {
   width: 300px;
   border: none;
   outline: none;
   border-bottom: 1px solid #000;
   font-size: 16px;
 }
-.button {
+
+.auth-card__btn {
   text-align: right;
-  margin-right: 30px;
+  margin: 15px 30px 0 0;
 }
-button {
+
+.auth-card__btn input {
   background: #305dff;
   border: none;
   color: #fff;

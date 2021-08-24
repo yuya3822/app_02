@@ -1,5 +1,5 @@
 <template>
-  <div class="reservations">
+  <div class="main">
     <ThanksCard text="ご予約ありがとうございます" btnText="戻る" />
   </div>
 </template>
@@ -12,9 +12,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.reservations {
-  padding: 120px 100px 0;
-}
-</style>

@@ -8,14 +8,14 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
-    user: "",
+    user_id: "",
     auth: false,
   },
   mutations: {
-    getUserData(state, payload) {
-      state.user = payload.data.data;
+    userData(state, payload) {
+      state.user_id = payload.data.id;
     },
-    getUserAuth(state, payload) {
+    userAuth(state, payload) {
       state.auth = payload.data.auth;
     },
     logout(state, payload) {
@@ -23,19 +23,15 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async getUserDataAction(context, email) {
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-      const data = await axios.get(baseUrl + "user?email=" + email);
-      context.commit("getUserData", data);
-    },
-    async getUserAuthAction(context, childData) {
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-      const data = await axios.post(baseUrl + "login", childData);
-      context.commit("getUserAuth", data);
+    async userAuthAction(context, childData) {
+      const baseUrl = "http://localhost:8000/api/v1/";
+      const data = await axios.post(baseUrl + "users/login", childData);
+      context.commit("userData", data);
+      context.commit("userAuth", data);
     },
     async logoutAction(context) {
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-      const data = await axios.post(baseUrl + "logout");
+      const baseUrl = "http://localhost:8000/api/v1/";
+      const data = await axios.post(baseUrl + "users/logout");
       context.commit("logout", data);
     },
   },

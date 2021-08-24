@@ -1,39 +1,45 @@
 <template>
-  <div class="detail flex">
-    <div class="left">
+  <div class="main flex">
+    <div class="shop-detail">
       <div class="flex align-items-center">
-        <button @click="$router.push('/')">＜</button>
-        <h2>{{ shopsData.name }}</h2>
+        <a class="shop-detail__link" @click="$router.push('/')">＜</a>
+        <h2 class="shop-detail__ttl">{{ shopsData.name }}</h2>
       </div>
-      <img :src="shopsData.image_url" alt width="100%" />
-      <p>#{{ shopsData.area }}&nbsp;#{{ shopsData.genre }}</p>
-      <p>{{ shopsData.description }}</p>
+      <img
+        class="shop-detail__img"
+        :src="shopsData.image_url"
+        alt="shop-img"
+        width="100%"
+      />
+      <p class="shop-detail__txt">
+        #{{ shopsData.area.name }}&nbsp;#{{ shopsData.genre.name }}
+      </p>
+      <p class="shop-detail__txt">{{ shopsData.description }}</p>
     </div>
-    <div class="right">
-      <div class="card">
-        <div class="card-content">
-          <h2>予約</h2>
-          <input type="date" v-model="date" />
-          <div class="pull-down">
-            <select v-model="time">
-              <option value hidden>Select time ...</option>
-              <option value="17:00">17:00</option>
-              <option value="18:00">18:00</option>
-              <option value="19:00">19:00</option>
-              <option value="20:00">20:00</option>
-              <option value="21:00">21:00</option>
-              <option value="22:00">22:00</option>
+    <div class="reservation">
+      <form class="reservation-card" @submit.prevent="select">
+        <div class="reservation-card__content">
+          <h2 class="reservation-card__content__ttl">予約</h2>
+          <input type="date" v-model="selectedDate" />
+          <div class="reservation-card__pull-down">
+            <select v-model="selectedTime">
+              <option v-for="item in times" :key="item.time" :value="item.time">
+                {{ item.time }}
+              </option>
             </select>
           </div>
-          <div class="pull-down">
-            <select v-model="number">
-              <option value="1">1人</option>
-              <option value="2">2人</option>
-              <option value="3">3人</option>
-              <option value="4">4人</option>
+          <div class="reservation-card__pull-down">
+            <select v-model="selectedNumber">
+              <option
+                v-for="item in numbers"
+                :key="item.number"
+                :value="item.number"
+              >
+                {{ item.number }}人
+              </option>
             </select>
           </div>
-          <div class="reservation-data">
+          <div class="reservation-card__data">
             <table>
               <tr>
                 <td>Shop</td>
@@ -41,21 +47,21 @@
               </tr>
               <tr>
                 <td>Date</td>
-                <td>{{ date }}</td>
+                <td>{{ selectedDate }}</td>
               </tr>
               <tr>
                 <td>Time</td>
-                <td>{{ time }}</td>
+                <td>{{ selectedTime }}</td>
               </tr>
               <tr>
                 <td>Number</td>
-                <td>{{ number }}人</td>
+                <td>{{ selectedNumber }}人</td>
               </tr>
             </table>
           </div>
         </div>
-        <div class="reservation-btn" @click="select()">予約する</div>
-      </div>
+        <input type="submit" class="reservation-btn" value="予約する" />
+      </form>
     </div>
   </div>
 </template>
@@ -64,32 +70,78 @@
 import axios from "axios";
 import moment from "moment";
 export default {
+  props: ["shop_id"],
   data() {
     return {
-      shopsData: "",
-      time: "17:00",
-      number: 1,
-      date: moment().format("YYYY-MM-DD"),
+      shopsData: {
+        area: {
+          name: "",
+        },
+        genre: {
+          name: "",
+        },
+      },
+      selectedDate: moment().format("YYYY-MM-DD"),
+      selectedTime: "17:00",
+      selectedNumber: 1,
+      times: [
+        {
+          time: "17:00",
+        },
+        {
+          time: "18:00",
+        },
+        {
+          time: "19:00",
+        },
+        {
+          time: "20:00",
+        },
+        {
+          time: "21:00",
+        },
+        {
+          time: "22:00",
+        },
+      ],
+      numbers: [
+        {
+          number: 1,
+        },
+        {
+          number: 2,
+        },
+        {
+          number: 3,
+        },
+        {
+          number: 4,
+        },
+      ],
     };
   },
-  props: ["shop_id"],
-  async created() {
-    const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-    const shops = await axios.get(baseUrl + "shops/" + this.shop_id);
-    this.shopsData = shops.data.item;
+  created() {
+    this.getShops();
   },
   methods: {
     async select() {
-      const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
+      const baseUrl = "http://localhost:8000/api/v1/";
       const sendData = {
-        date: this.date,
-        time: this.time,
-        user_id: this.$store.state.user.id,
-        shop_id: this.shop_id,
-        user_num: this.number,
+        date: this.selectedDate,
+        time: this.selectedTime,
+        user_id: this.$store.state.user_id,
+        user_num: this.selectedNumber,
       };
-      await axios.post(baseUrl + "reservations", sendData);
+      await axios.post(
+        baseUrl + "shops/" + this.shop_id + "/reservations",
+        sendData
+      );
       this.$router.push("/reservation");
+    },
+    async getShops() {
+      const baseUrl = "http://localhost:8000/api/v1/";
+      const shops = await axios.get(baseUrl + "shops/" + this.shop_id);
+      this.shopsData = shops.data.data;
     },
   },
   computed: {
@@ -101,56 +153,64 @@ export default {
 </script>
 
 <style scoped>
-.left {
-  padding: 140px 0 0 100px;
+.shop-detail {
+  padding: 40px 0 0 100px;
   width: 45%;
 }
-.left h2 {
-  font-size: 28px;
-  margin-left: 12px;
-}
-.left img {
-  margin-top: 30px;
-}
-.left p {
-  margin-top: 25px;
-  line-height: 24px;
-}
-.left button {
+
+.shop-detail__link {
   background-color: #fff;
   border: none;
   border-radius: 5px;
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
+  padding: 10px;
   font-weight: bold;
-  outline: none;
+  text-decoration: none;
   box-shadow: 2px 2px 4px gray;
 }
-.right {
+
+.shop-detail__ttl {
+  font-size: 28px;
+  margin-left: 12px;
+}
+
+.shop-detail__img {
+  margin-top: 30px;
+}
+
+.shop-detail__txt {
+  margin-top: 25px;
+  line-height: 24px;
+}
+
+.reservation {
   width: 45%;
   padding: 40px 100px 0;
 }
-.right .card {
+
+.reservation-card {
   background: #305dff;
   width: 100%;
-  height: 85vh;
+  height: 70vh;
   border-radius: 5px;
   position: relative;
   box-shadow: 2px 2px 4px gray;
 }
-.right .card .card-content {
+
+.reservation-card__content {
   padding: 36px 0 0 28px;
 }
-.right .card h2 {
+
+.reservation-card__content__ttl {
   font-size: 24px;
   color: #fff;
   margin-bottom: 28px;
 }
-.pull-down {
+
+.reservation-card__pull-down {
   margin-top: 14px;
 }
-select {
+
+.reservation-card__pull-down select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -166,7 +226,8 @@ select {
   line-height: 1.1em;
   outline: none;
 }
-.reservation-data {
+
+.reservation-card__data {
   background: rgba(135, 197, 255, 0.32);
   margin-top: 20px;
   width: 80%;
@@ -174,13 +235,16 @@ select {
   color: #fff;
   padding: 20px;
 }
+
 tr {
   height: 30px;
 }
+
 td {
   width: 100px;
   vertical-align: middle;
 }
+
 .reservation-btn {
   width: 100%;
   text-align: center;
@@ -188,15 +252,10 @@ td {
   position: absolute;
   bottom: 0;
   padding: 20px 0;
-  z-index: 100;
+  border: none;
+  z-index: 1;
   background: #0038ff;
   border-radius: 0 0 5px 5px;
   cursor: pointer;
-}
-.card-content input {
-  border: none;
-  border-radius: 5px;
-  outline: none;
-  padding: 5px 10px 5px 10px;
 }
 </style>

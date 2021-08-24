@@ -15,14 +15,6 @@ export default {
 </script>
 
 <style>
-/*
-html5doctor.com Reset Stylesheet
-v1.6.1
-Last Updated: 2010-09-17
-Author: Richard Clark - http://richclarkdesign.com
-Twitter: @rich_clark
-*/
-
 html,
 body,
 div,
@@ -217,5 +209,9 @@ select {
 
 .align-items-center {
   align-items: center;
+}
+
+.main {
+  padding: 120px 100px 0;
 }
 </style>

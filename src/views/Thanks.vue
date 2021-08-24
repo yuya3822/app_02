@@ -1,5 +1,5 @@
 <template>
-  <div class="thanks">
+  <div class="main">
     <ThanksCard text="会員登録ありがとうございます" btnText="ログインする" />
   </div>
 </template>
@@ -12,9 +12,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.thanks {
-  padding: 120px 100px 0;
-}
-</style>

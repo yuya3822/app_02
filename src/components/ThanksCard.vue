@@ -1,7 +1,7 @@
 <template>
-  <div class="card">
-    <p class="text">{{ text }}</p>
-    <button @click="transition">{{ btnText }}</button>
+  <div class="thanks-card">
+    <p class="thanks-card__txt">{{ text }}</p>
+    <a class="thanks-card__link" @click="transition">{{ btnText }}</a>
   </div>
 </template>
 
@@ -21,7 +21,11 @@ export default {
 </script>
 
 <style scoped>
-.card {
+.thanks {
+  padding: 120px 100px 0;
+}
+
+.thanks-card {
   background: #ffffff;
   width: 450px;
   text-align: center;
@@ -31,17 +35,19 @@ export default {
   padding: 100px 0;
   margin: 0 auto;
 }
-.text {
+
+.thanks-card__txt {
   font-size: 24px;
   padding-bottom: 48px;
 }
-button {
+
+.thanks-card__link {
   background: #305dff;
   border: none;
   color: #fff;
   border-radius: 5px;
   padding: 5px 15px;
   cursor: pointer;
-  outline: none;
+  text-decoration: none;
 }
 </style>

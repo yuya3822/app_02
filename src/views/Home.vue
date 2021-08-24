@@ -1,27 +1,34 @@
 <template>
-  <div class="home">
+  <div class="main">
     <div class="search flex">
-      <div class="pull-down">
+      <div class="search__pull-down">
         <select name="area" v-model="selectedArea">
           <option value="">All area</option>
-          <option value="東京都">東京都</option>
-          <option value="大阪府">大阪府</option>
-          <option value="福岡県">福岡県</option>
+          <option v-for="area in areasData" :value="area.name" :key="area.id">
+            {{ area.name }}
+          </option>
         </select>
       </div>
-      <div class="pull-down">
+      <div class="search__pull-down">
         <select name="genre" v-model="selectedGenre">
           <option value="">All genre</option>
-          <option value="寿司">寿司</option>
-          <option value="焼肉">焼肉</option>
-          <option value="居酒屋">居酒屋</option>
-          <option value="イタリアン">イタリアン</option>
-          <option value="ラーメン">ラーメン</option>
+          <option
+            v-for="genre in genresData"
+            :value="genre.name"
+            :key="genre.id"
+          >
+            {{ genre.name }}
+          </option>
         </select>
       </div>
-      <input type="text" placeholder="Search ..." v-model="keyword" />
+      <input
+        class="search__keyword"
+        type="text"
+        placeholder="Search ..."
+        v-model="keyword"
+      />
     </div>
-    <CommonCard :is="CommonCard" :shops="filteredShops" />
+    <CommonCard :shops="filteredShops" @getChildData="getShops" />
   </div>
 </template>
 
@@ -32,11 +39,11 @@ export default {
   data() {
     return {
       shopsData: [],
+      areasData: [],
+      genresData: [],
       keyword: "",
       selectedArea: "",
       selectedGenre: "",
-      likeData: "",
-      CommonCard: null,
     };
   },
   computed: {
@@ -45,8 +52,8 @@ export default {
       for (let i in this.shopsData) {
         let shop = this.shopsData[i];
         if (shop.name.indexOf(this.keyword) !== -1) {
-          if (shop.area == this.selectedArea || !this.selectedArea) {
-            if (shop.genre == this.selectedGenre || !this.selectedGenre) {
+          if (shop.area.name == this.selectedArea || !this.selectedArea) {
+            if (shop.genre.name == this.selectedGenre || !this.selectedGenre) {
               shops.push(shop);
             }
           }
@@ -55,32 +62,37 @@ export default {
       return shops;
     },
   },
-  async created() {
-    const baseUrl = "https://thawing-refuge-74444.herokuapp.com/api/";
-    const shops = await axios.get(baseUrl + "shops");
-    this.shopsData = shops.data.data;
-    this.likeData = await axios.get(
-      baseUrl + "like?user_id=" + this.$store.state.user.id
-    );
-    for (let i = 0; i < this.shopsData.length; i++) {
-      for (let j = 0; j < this.likeData.data.data.length; j++) {
-        if (!this.shopsData[i].like) {
-          this.shopsData[i].like =
-            this.shopsData[i].id === this.likeData.data.data[j].shop_id
-              ? true
-              : false;
-        }
-      }
-    }
-    this.CommonCard = CommonCard;
+  methods: {
+    async getShops() {
+      const baseUrl = "http://localhost:8000/api/v1/";
+      const shops = await axios.get(
+        baseUrl + "shops?user_id=" + this.$store.state.user_id
+      );
+      this.shopsData = shops.data.data;
+    },
+    async getAreas() {
+      const baseUrl = "http://localhost:8000/api/v1/";
+      const areas = await axios.get(baseUrl + "areas");
+      this.areasData = areas.data.data;
+    },
+    async getGenres() {
+      const baseUrl = "http://localhost:8000/api/v1/";
+      const genres = await axios.get(baseUrl + "genres");
+      this.genresData = genres.data.data;
+    },
+  },
+  created() {
+    this.getShops();
+    this.getAreas();
+    this.getGenres();
+  },
+  components: {
+    CommonCard,
   },
 };
 </script>
 
 <style scoped>
-.home {
-  padding: 120px 100px 0;
-}
 .search {
   position: absolute;
   top: 40px;
@@ -92,10 +104,12 @@ export default {
   border-radius: 5px;
   box-shadow: 2px 2px 4px gray;
 }
-.pull-down {
+
+.search__pull-down {
   border-right: 1px solid #eee;
 }
-select {
+
+.search__pull-down select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -109,11 +123,10 @@ select {
   background-size: 12px 10px;
   background-position: right 10px center;
   line-height: 1.1em;
-  outline: none;
   cursor: pointer;
 }
-input {
-  border: none;
+
+.search__keyword {
   width: 400px;
   background-image: url(../assets/search.png);
   background-repeat: no-repeat;
@@ -121,7 +134,18 @@ input {
   background-size: auto 60%;
   background-color: #fff;
   padding-left: 40px;
+  border: none;
   outline: 0;
   font-size: 14px;
+}
+
+.search__btn {
+  background: #305dff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 60px;
+  text-align: center;
 }
 </style>
